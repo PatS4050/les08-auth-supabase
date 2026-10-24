@@ -26,8 +26,29 @@ export const getIngelogdeArts = cache(async (): Promise<Arts | null> => {
     //  - Is er niemand ingelogd? Geef dan null terug.
     //  - Zoek in de tabel `arts` de rij waarvan user_id gelijk is aan het id van
     //    de gebruiker, en geef die terug (id, naam, type).
+    // server getSession haalt de gegevens uit de cache en niet uit de database
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    // Is er niemand ingelogd? Geeft null terug
+    if (error || !user) {
     return null;
+};
+    // Zoek de arts in database
+    const { data: arts, error: artsError } = await supabase
+        .from("arts")
+        .select("id, naam, type")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+    // Geen arts, geeft null terug
+    if (artsError || !arts) {
+        return null;
+    }
+
+    // Geeft arts terug
+    return arts;
 });
+
 
 /** Voor pagina's achter de login: stuurt door naar /inloggen als er niemand is ingelogd. */
 export async function vereisIngelogdeArts(): Promise<Arts> {
