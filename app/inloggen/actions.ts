@@ -14,7 +14,27 @@ export async function login(_vorigResultaat: LoginResultaat, formData: FormData)
     const password = leesTekst(formData, "password");
 
     if (!email || !password) {
-        return {status: "error", melding: "Vul je e-mailadres en wachtwoord in.", email};
+        //
+
+        // Maak Supabase-serverclient
+        const supabase = await createSupabaseServerClient();
+        // Log gebruiker in met e-mailadres en wachtwoord
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+        // Controleer of het inloggen is gelukt
+        if (error) {
+            return {
+                status: "error",
+                melding: loginFoutmelding(error.code),
+                email
+            };
+        }
+
+        // Inloggen gelukt: stuur door naar de afspraken
+        redirect("/mijn-afspraken");
+
     }
 
     // TODO stap 2: log de gebruiker in bij Supabase.
@@ -29,7 +49,8 @@ export async function login(_vorigResultaat: LoginResultaat, formData: FormData)
 
 export async function uitloggen(): Promise<void> {
     // TODO stap 2: log de gebruiker uit bij Supabase. Daarmee worden ook de sessie-cookies verwijderd.
-
+    const supabase = await createSupabaseServerClient();
+    await supabase.auth.signOut();
     redirect("/inloggen");
 }
 
