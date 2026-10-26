@@ -29,7 +29,6 @@ export async function login(_vorigResultaat: LoginResultaat, formData: FormData)
         password
     });
     // Controleer of het inloggen is gelukt
-    if (error) {
         if (error) {
             return {
                 status: "error",
@@ -37,10 +36,8 @@ export async function login(_vorigResultaat: LoginResultaat, formData: FormData)
                 email
             };
         }
-        // Inloggen gelukt: stuur door naar de afspraken
-        redirect("/mijn-afspraken");
-    }
-
+    // Inloggen gelukt: stuur door naar de afspraken
+    redirect("/mijn-afspraken");
     // TODO stap 2: log de gebruiker in bij Supabase.
     //  - Maak een client met createSupabaseServerClient(). Die zet na het inloggen
     //    automatisch de sessie-cookies.
