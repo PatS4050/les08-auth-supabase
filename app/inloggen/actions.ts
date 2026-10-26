@@ -4,6 +4,7 @@
 import {redirect} from "next/navigation";
 import {createSupabaseServerClient} from "@/lib/supabase/server";
 import {leesTekst} from "@/lib/validatie";
+import {error} from "next/dist/build/output/log";
 
 export type LoginResultaat =
     | { status: "idle" }
@@ -14,16 +15,21 @@ export async function login(_vorigResultaat: LoginResultaat, formData: FormData)
     const password = leesTekst(formData, "password");
 
     if (!email || !password) {
-        //
-
-        // Maak Supabase-serverclient
-        const supabase = await createSupabaseServerClient();
-        // Log gebruiker in met e-mailadres en wachtwoord
-        const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password
-        });
-        // Controleer of het inloggen is gelukt
+            return {
+                status: "error",
+                melding: loginFoutmelding(error.code),
+                email
+            };
+        }
+    // Maak Supabase-serverclient
+    const supabase = await createSupabaseServerClient();
+    // Log gebruiker in met e-mailadres en wachtwoord
+    const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+    });
+    // Controleer of het inloggen is gelukt
+    if (error) {
         if (error) {
             return {
                 status: "error",
@@ -31,10 +37,8 @@ export async function login(_vorigResultaat: LoginResultaat, formData: FormData)
                 email
             };
         }
-
         // Inloggen gelukt: stuur door naar de afspraken
         redirect("/mijn-afspraken");
-
     }
 
     // TODO stap 2: log de gebruiker in bij Supabase.

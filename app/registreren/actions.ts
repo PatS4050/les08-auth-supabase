@@ -60,11 +60,42 @@ export async function registreer(
     //    {status: "bevestig-email", email: invoer.email} terug.
     //    Let op: bestaat het e-mailadres al, dan geeft Supabase hier bewust géén
     //    fout (zodat niemand kan uitzoeken welke adressen een account hebben).
+
+
+    // return {
+    //     status: "error",
+    //     veldFouten: {},
+    //     melding: "Registreren is nog niet gebouwd (stap 2).",
+    //     invoer,
+    // };
+
+
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.signUp({
+        email: invoer.email,
+        password: wachtwoord,
+        options: {
+            data: {
+                naam: invoer.naam,
+                type: invoer.type
+            },
+            emailRedirectTo: `${await siteUrl()}/auth/callback?next=/mijn-afspraken`
+        }
+    });
+    if (error) {
+        const fout = registratieFout(error.code);
+        return {
+            status: "error",
+            ...fout,
+            invoer
+        };
+    }
+    if (data.session) {
+        redirect("/mijn-afspraken");
+    }
     return {
-        status: "error",
-        veldFouten: {},
-        melding: "Registreren is nog niet gebouwd (stap 2).",
-        invoer,
+        status: "bevestig-email",
+        email: invoer.email
     };
 }
 

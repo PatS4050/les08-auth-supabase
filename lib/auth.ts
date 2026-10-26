@@ -27,6 +27,7 @@ export const getIngelogdeArts = cache(async (): Promise<Arts | null> => {
     //  - Zoek in de tabel `arts` de rij waarvan user_id gelijk is aan het id van
     //    de gebruiker, en geef die terug (id, naam, type).
     // server getSession haalt de gegevens uit de cache en niet uit de database
+    const supabase = await createSupabaseServerClient();
     const { data: { user }, error } = await supabase.auth.getUser();
 
     // Is er niemand ingelogd? Geeft null terug
