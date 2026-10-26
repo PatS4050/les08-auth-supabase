@@ -48,7 +48,7 @@ export async function login(_vorigResultaat: LoginResultaat, formData: FormData)
     //  - Gaat het mis? Geef dan een foutresultaat terug. loginFoutmelding()
     //    hieronder vertaalt de foutcode van Supabase naar een nette Nederlandse melding.
     //  - Gaat het goed? Stuur de gebruiker dan door naar /mijn-afspraken.
-    return {status: "error", melding: "Inloggen is nog niet gebouwd (stap 2).", email};
+    return {status: "error", melding: "Inloggen is niet gelukt.", email};
 }
 
 export async function uitloggen(): Promise<void> {

@@ -77,6 +77,16 @@ export async function maakAfspraakAction(
         if (error instanceof OnbekendeBehandelingError) {
             return ongeldigeKeuze;
         }
+        if (error instanceof Error && error.cause &&
+            typeof error.cause === "object" &&
+            "code" in error.cause &&
+            error.cause.code === "42501") {
+            return {
+                status: "error",
+                melding: "Je hebt onvoldoende rechten om deze afspraak te boeken.",
+                invoer
+            };
+        }
 
         console.error(error);
         return {

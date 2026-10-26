@@ -14,7 +14,7 @@ export default async function Inloggen({searchParams}: PageProps<"/inloggen">) {
     return (
         <main className="page-container">
             <section className="login-container">
-                <h1>Welkom terug dokter!</h1>
+                <h1>Welkom terug dokter!</h1>Ï
                 <p>Log in om je afspraken te beheren.</p>
                 {fout === "bevestiging" && (
                     <p className="form-error" role="alert">
